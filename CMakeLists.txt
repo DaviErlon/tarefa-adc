@@ -59,10 +59,9 @@ target_include_directories(tarefa-adc PRIVATE
 # Add any user requested libraries
 target_link_libraries(tarefa-adc 
         hardware_i2c
-        hardware_timer
-        hardware_clocks
         hardware_pwm
         hardware_adc
+        pico_multicore
         )
 
 pico_add_extra_outputs(tarefa-adc)

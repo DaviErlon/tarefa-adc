@@ -4,9 +4,9 @@
 #include "hardware/i2c.h"
 #include "inc/ssd1306.h"
 #include "inc/font.h"
-#include "hardware/clocks.h"
 #include "hardware/pwm.h"
 #include "hardware/adc.h"
+#include "pico/multicore.h"
 
 #define BOTAO_A 5
 #define BOTAO_JOY 22
@@ -15,9 +15,16 @@
 #define LED_R 13
 #define LED_G 11
 #define LED_B 12
+#define I2C_PORT i2c1
+#define I2C_SDA 14
+#define I2C_SCL 15
+#define endereco 0x3C
 
 static uint slice = 0;
+static ssd1306_t ssd;
 static volatile bool flag = true;
+static int16_t v_y = 2048;
+static int16_t v_x = 2048;
 
 void callback(uint gpio, uint32_t events)
 {
@@ -78,27 +85,86 @@ void adc_configuracao()
     adc_set_round_robin(0x03);
 }
 
+void i2c_configuracao()
+{
+    i2c_init(I2C_PORT, 400 * 1000);
+    gpio_set_function(I2C_SDA, GPIO_FUNC_I2C);
+    gpio_set_function(I2C_SCL, GPIO_FUNC_I2C);
+    gpio_pull_up(I2C_SDA);
+    gpio_pull_up(I2C_SCL);
+    ssd1306_init(&ssd, WIDTH, HEIGHT, false, endereco, I2C_PORT);
+    ssd1306_config(&ssd);
+    ssd1306_fill(&ssd, false);
+    ssd1306_send_data(&ssd);
+}
+
+void quadrado(int16_t x_quad, int16_t y_quad)
+{   
+    ssd1306_fill(&ssd, false);
+
+    // dando limites a leitura no joystick para corresponder as bordas do display
+    if(x_quad < 176)
+    {
+        x_quad = 176;
+    }
+    if(x_quad > 3920)
+    {
+        x_quad = 3920;
+    }
+    if(y_quad < 1218)
+    {
+        y_quad = 1218;
+    }
+    if(y_quad > 2878)
+    {
+        y_quad = 2878;
+    }
+    x_quad = x_quad - 176;
+    x_quad = (int)(x_quad / 32.5) + 3;
+    y_quad = y_quad - 1218;
+    y_quad = (int)(y_quad / 33.0);
+    y_quad = abs(y_quad - 50) + 3;
+
+    ssd1306_rect(&ssd, y_quad, x_quad, 8, 8, true, true);
+
+    ssd1306_send_data(&ssd);
+}
+
+void display_core()
+{
+    while(true)
+    {
+        quadrado(v_x, v_y);
+    }
+}
+
 int main()
 {   
+
     gpio_configuracao();
     pwm_configuracao();
     adc_configuracao();
+    i2c_configuracao();
 
     gpio_set_irq_enabled_with_callback(BOTAO_A, GPIO_IRQ_EDGE_FALL, true, callback);
     gpio_set_irq_enabled_with_callback(BOTAO_JOY, GPIO_IRQ_EDGE_FALL, true, callback);
 
-    int16_t v_y;
-    int16_t v_x;
+    multicore_launch_core1(display_core);
+
+    int16_t y_led;
+    int16_t x_led;
+
     while(true)
-    {
+    {   
+        v_y = adc_read();
+        v_x = adc_read();
+
         if(flag)
         {
-            v_y = adc_read();
-            v_x = adc_read();
-            v_y = ( abs(v_y - 2048) ) * 4;
-            v_x = ( abs(v_x - 2048) ) * 4;
-            pwm_set_gpio_level(LED_B, v_y);
-            pwm_set_gpio_level(LED_R, v_x);
+            y_led = ( abs(v_y - 2048) ) * 4;
+            x_led = ( abs(v_x - 2048) ) * 4;
+            pwm_set_gpio_level(LED_B, y_led);
+            pwm_set_gpio_level(LED_R, x_led);
         }
 
         sleep_ms(10);
