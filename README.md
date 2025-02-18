@@ -1,17 +1,18 @@
 # Descrição
   Este é um repositório dedicado a um trabalho do projeto EmbarcaTech que envolve o periférico ADC do rp2040, utilizando da placa de desenolvimento BitDogLab. A arquivo principal é o
 `tarefa-adc.c`, os arquivos auxiliares para manipulação do display se encontram na pasta `inc` e a compilação deve seguir o arquivo `CMakeLists.txt`.
+
 ## Hardware 
   Como este projeto utiliza a placa de desenvolvimento BitDogLab, os periféricos utilizados se encontram nas seguintes GPIOs:
-    * GPIO 5: Push Button A.
-    * GPIO 22: Push Button Joystick.
-    * GPIO 26: Potenciômetro correspondendo ao eixo Y \(ADC canal 0\).
-    * GPIO 27: Potenciômetro correspondendo ao eixo X \(ADC canal 1\).
-    * GPIO 11: Pino verde de um Led RGB.
-    * GPIO 12: Pino azul de um Led RGB.
-    * GPIO 13: Pino vermelho de um Led RGB.
-    * GPIO 14: Pino I2C SDA do display.
-    * GPIO 15: Pino I2C SCL do display.
+    1. GPIO 5: Push Button A.
+    2. GPIO 22: Push Button Joystick.
+    3. GPIO 26: Potenciômetro correspondendo ao eixo Y \(ADC canal 0\).
+    4. GPIO 27: Potenciômetro correspondendo ao eixo X \(ADC canal 1\).
+    5. GPIO 11: Pino verde de um Led RGB.
+    6. GPIO 12: Pino azul de um Led RGB.
+    7. GPIO 13: Pino vermelho de um Led RGB.
+    8. GPIO 14: Pino I2C SDA do display.
+    9. GPIO 15: Pino I2C SCL do display.
 
 ## Software
   O firmware desse projeto é desenvolvido com o principal intuito de manipular a posição de um quadrado no display e a s cores do led RGB com o joystick. As demais funções são desenvolvidas
