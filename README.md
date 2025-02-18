@@ -4,6 +4,7 @@
 
 ## Hardware 
   Como este projeto utiliza a placa de desenvolvimento BitDogLab, os periféricos utilizados se encontram nas seguintes GPIOs:
+  
     1. GPIO 5: Push Button A.
     2. GPIO 22: Push Button Joystick.
     3. GPIO 26: Potenciômetro correspondendo ao eixo Y \(ADC canal 0\).
