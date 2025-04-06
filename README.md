@@ -23,8 +23,3 @@ as coordenadas do quadrado para que sempre deixe 3 pixels nas bordas para desenh
 ADC seja proporcional as coordenadas do display.
 
 Nota: há um tratamento especial para a coordenada Y visto que para o potenciometro ele cresce de baixo para cima, já as coordenadas do display no eixo Y cresce de cima para baixo.
-
-***
-
-## Vídeo
-  Link para o [vídeo](https://drive.google.com/file/d/1MbjbCnrPJT4OrwbNjGeZKD3WJA78Uood/view?usp=sharing).
